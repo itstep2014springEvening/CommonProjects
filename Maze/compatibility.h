@@ -9,6 +9,11 @@ void clear()
     windowsClear();
 }
 
+#define EMPTY_CELL "."
+#define WALL_CELL "\xDB"
+#define FOG_CELL "\xB0"
+#define HERO_CELL "@"
+
 #elif defined(linux) || defined(__linux) || defined(__linux__) || defined(__gnu_linux)
 
 void linuxClear();
