@@ -4,6 +4,8 @@
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__) \
  || defined(WIN64) || defined(_WIN64) || defined(__WIN64) || defined(__WIN64__)
 
+void windowsClear();
+
 void clear()
 {
     windowsClear();
