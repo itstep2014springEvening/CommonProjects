@@ -1,4 +1,3 @@
-//#include "compatibility.h"
 #include <stdlib.h>
 
 void windowsClear()
