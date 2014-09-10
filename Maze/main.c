@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "compatibility.h"
 
 void allocateMatrix(int ***matrix, int width, int height);
 void freeMatrix(int ***matrix, int width, int height);
@@ -11,6 +12,11 @@ int main()
 
     allocateMatrix(&maze,width,height);
     allocateMatrix(&fog,width,height);
+
+    printf("first\n");
+    scanf("%d",&width);
+    clear();
+    printf("second\n");
 
     freeMatrix(&fog,width,height);
     freeMatrix(&maze,width,height);
