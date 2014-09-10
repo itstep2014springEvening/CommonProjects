@@ -11,10 +11,18 @@ void clear()
 
 #elif defined(linux) || defined(__linux) || defined(__linux__) || defined(__gnu_linux)
 
+void linuxClear();
+
 void clear()
 {
     linuxClear();
 }
+
+#define EMPTY_CELL "."
+#define WALL_CELL "\342\226\210"
+#define FOG_CELL "\342\226\221"
+#define HERO_CELL "@"
+
 
 #else
 #error Not supporting OS
