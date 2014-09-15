@@ -24,8 +24,8 @@ void generateFog(Matrix fog, Position hero);
 int main()
 {
     srand(time(NULL));
-    Matrix maze={NULL,0,0};
-    Matrix fog = {NULL,0,0};
+    Matrix maze = {NULL, 0, 0};
+    Matrix fog = {NULL, 0, 0};
     int width = 30, height = 20;
     Position hero;
 
@@ -44,54 +44,58 @@ int main()
     return 0;
 }
 
-void allocateMatrix(int ***matrix, int width, int height)
+void allocateMatrix(Matrix *a, int width, int height)
 {
-    *matrix = (int **) malloc(height * sizeof(int *));
+    a->matrix = (int **) malloc(height * sizeof(int *));
 
     for(int i = 0; i < height; ++i)
     {
-        (*matrix)[i] = NULL;
+        a->matrix[i] = NULL;
     }
 
     for(int i = 0; i < height; ++i)
     {
-        (*matrix)[i] = (int *) malloc(width * sizeof(int));
+        a->matrix[i] = (int *) malloc(width * sizeof(int));
     }
+
+    a->width = width;
+    a->height = height;
 }
 
-void freeMatrix(int ***matrix, int width, int height)
+void freeMatrix(Matrix *a)
 {
-    for(int i = 0; i < height; ++i)
+    for(int i = 0; i < a->height; ++i)
     {
-        free((*matrix)[i]);
-        (*matrix)[i] = NULL;
+        free(a->matrix[i]);
+        a->matrix[i] = NULL;
     }
 
-    free(*matrix);
-    *matrix = NULL;
+    free(a->matrix);
+    a->matrix = NULL;
 }
 
-void drawMaze(int **maze, int **fog, int width, int height, int heroX, int heroY)
+
+void drawMaze(Matrix maze, Matrix fog, Position hero)
 {
     static char symbols [2][4] = {EMPTY_CELL, WALL_CELL};
 
-    for(int i = 0; i < height; ++i)
+    for(int i = 0; i < maze.height; ++i)
     {
-        for(int j = 0; j < width; ++j)
+        for(int j = 0; j < maze.width; ++j)
         {
-            if(fog[i][j] == 1)
+            if(fog.matrix[i][j] == 1)
             {
                 printf("%s", FOG_CELL);
             }
             else
             {
-                if(j == heroX && i == heroY)
+                if(j == hero.x && i == hero.y)
                 {
                     printf("%s", HERO_CELL);
                 }
                 else
                 {
-                    printf("%s", symbols[maze[i][j]]);
+                    printf("%s", symbols[maze.matrix[i][j]]);
                 }
             }
         }
@@ -100,47 +104,48 @@ void drawMaze(int **maze, int **fog, int width, int height, int heroX, int heroY
     }
 }
 
-void generateMaze(int **maze, int width, int height, int *heroX, int *heroY)
+void generateMaze(Matrix maze, Position *hero)
 {
-    for(int i = 0; i < height; ++i)
+    for(int i = 0; i < maze.height; ++i)
     {
-        for(int j = 0; j < width; ++j)
+        for(int j = 0; j < maze.width; ++j)
         {
-            maze[i][j] = 0; //EMPTY_CELL
+            maze.matrix[i][j] = 0; //EMPTY_CELL
         }
     }
 
-    for(int i = 0; i < height; ++i)
+    for(int i = 0; i < maze.height; ++i)
     {
-        maze[i][0] = 1;
-        maze[i][width - 1] = 1;
+        maze.matrix[i][0] = 1;
+        maze.matrix[i][maze.width - 1] = 1;
     }
 
-    for(int i = 0; i < width; ++i)
+    for(int i = 0; i < maze.width; ++i)
     {
-        maze[0][i] = 1;
-        maze[height - 1][i] = 1;
+        maze.matrix[0][i] = 1;
+        maze.matrix[maze.height - 1][i] = 1;
     }
 
-    int perimetr = 2 * (width - 2) + 2 * (height - 2);
-    int exit = rand() % perimetr;
+    int perimetr = 2 * (maze.width - 2) + 2 * (maze.height - 2);
+    int randCell = rand() % perimetr;
 
-    if(exit < width - 2)
-        maze[0][exit + 1] = 0;
-    else if(exit < 2 * (width - 2))
-        maze[height - 1][exit - width + 3] = 0;
-    else if(exit < 2 * (width - 2) + height - 2)
-        maze[exit - 2 * width + 5][0] = 0;
+    if(randCell < maze.width - 2)
+        maze.matrix[0][randCell + 1] = 0;
+    else if(randCell < 2 * (maze.width - 2))
+        maze.matrix[maze.height - 1][randCell - maze.width + 3] = 0;
+    else if(randCell < 2 * (maze.width - 2) + maze.height - 2)
+        maze.matrix[randCell - 2 * maze.width + 5][0] = 0;
     else
-        maze[exit - 2 * width - height + 7][width - 1] = 0;
+        maze.matrix[randCell - 2 * maze.width - maze.height + 7][maze.width - 1] = 0;
 
-    int countOfWall = (width - 2) * (height - 2) / 2;
+    int countOfWall = (maze.width - 2) * (maze.height - 2) / 2;
 
     for(int i = 0; i < countOfWall; ++i)
     {
-        int wallX = rand() % (width - 2) + 1;
-        int wallY = rand() % (height - 2) + 1;
-        maze[wallY][wallX] = 1;
+        Position wall;
+        wall.x = rand() % (maze.width - 2) + 1;
+        wall.y = rand() % (maze.height - 2) + 1;
+        maze.matrix[wall.y][wall.x] = 1;
     }
 
     int flag = 1;
@@ -148,24 +153,24 @@ void generateMaze(int **maze, int width, int height, int *heroX, int *heroY)
 
     do
     {
-        x = rand() % (width - 2) + 1;
-        y = rand() % (height - 2) + 1;
-        flag = maze[y][x] != 0;
+        x = rand() % (maze.width - 2) + 1;
+        y = rand() % (maze.height - 2) + 1;
+        flag = maze.matrix[y][x] != 0;
     } while(flag);
 
-    *heroX = x;
-    *heroY = y;
+    hero->x = x;
+    hero->y = y;
 }
 
-void generateFog(int **fog, int width, int height, int heroX, int heroY)
+void generateFog(Matrix fog, Position hero)
 {
-    for(int i = 0; i < height; ++i)
+    for(int i = 0; i < fog.height; ++i)
     {
-        for(int j = 0; j < width; ++j)
+        for(int j = 0; j < fog.width; ++j)
         {
-            fog[i][j] = 1; //EMPTY_CELL
+            fog.matrix[i][j] = 1; //EMPTY_CELL
         }
     }
 
-    fog[heroY][heroX] = 0;
+    fog.matrix[hero.y][hero.x] = 0;
 }
