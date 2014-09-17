@@ -29,7 +29,7 @@ int main()
     srand(time(NULL));
     Matrix maze = {NULL, 0, 0};
     Matrix fog = {NULL, 0, 0};
-    int width = 50, height = 35;
+    int width = 50, height = 40;
     Position hero, exit;
 
 
@@ -38,7 +38,6 @@ int main()
 
     generateMaze(maze, &hero, &exit);
     generateFog(fog, hero);
-    //  drawMaze(maze, fog, hero);
     runGame(maze, fog, exit, hero);
     freeMatrix(&fog);
     freeMatrix(&maze);
@@ -115,6 +114,7 @@ void drawMaze(Matrix maze, Matrix fog, Position hero)
 
         printf("\n");
     }
+
     printf("\n\n");
 }
 
@@ -277,12 +277,12 @@ typedef void (*Slot)(Position *, Position, Matrix);
 void emptyCell(Position *hero, Position target, Matrix fog)
 {
     *hero = target ;
-    fog.matrix[target.y][target.x]=0;
+    fog.matrix[target.y][target.x] = 0;
 }
 
 void wallCell(Position *hero, Position target, Matrix fog)
 {
-    fog.matrix[target.y][target.x]=0;
+    fog.matrix[target.y][target.x] = 0;
 }
 
 void runGame(Matrix maze, Matrix fog, Position exit, Position hero)
@@ -291,36 +291,43 @@ void runGame(Matrix maze, Matrix fog, Position exit, Position hero)
 
     while(1)
     {
+        clear();
+        drawMaze(maze, fog, hero);
+
         if(exit.x == hero.x && exit.y == hero.y)
         {
-            printf("WINNER,gameover\n");
+            printf("\n\nYOU HAVE WON!!!!\n");
             return ;
         }
 
-        clear();
-        drawMaze(maze, fog, hero);
-        Direction direction =getKey();
-        Position target=hero;
-        switch (direction)
+        Direction direction = getKey();
+        Position target = hero;
+
+        switch(direction)
         {
-        case Up:
-            --target.y;
-            break;
-        case Down:
-            ++target.y;
-            break;
-        case Right:
-            ++target.x;
-            break;
-        case Left:
-            --target.x;
-            break;
-        case Mistake:
-            break;
-        default:
-            assert(0);
+            case Up:
+                --target.y;
+                break;
+
+            case Down:
+                ++target.y;
+                break;
+
+            case Right:
+                ++target.x;
+                break;
+
+            case Left:
+                --target.x;
+                break;
+
+            case Mistake:
+                break;
+
+            default:
+                assert(0);
         }
 
-        slot[maze.matrix[target.y][target.x]](&hero,target,fog);
+        slot[maze.matrix[target.y][target.x]](&hero, target, fog);
     }
 }
