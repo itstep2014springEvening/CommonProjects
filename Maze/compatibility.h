@@ -25,7 +25,7 @@ void clear()
     windowsClear();
 }
 
-#define EMPTY_CELL "."
+#define EMPTY_CELL " "
 #define WALL_CELL "\xDB"
 #define FOG_CELL "\xB0"
 #define HERO_CELL "@"
@@ -94,7 +94,7 @@ void clear()
     linuxClear();
 }
 
-#define EMPTY_CELL "."
+#define EMPTY_CELL " "
 #define WALL_CELL "\342\226\210"
 #define FOG_CELL "\342\226\221"
 #define HERO_CELL "@"

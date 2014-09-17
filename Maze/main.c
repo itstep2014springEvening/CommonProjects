@@ -115,6 +115,7 @@ void drawMaze(Matrix maze, Matrix fog, Position hero)
 
         printf("\n");
     }
+    printf("\n\n");
 }
 
 void generateBorder(Matrix maze);
