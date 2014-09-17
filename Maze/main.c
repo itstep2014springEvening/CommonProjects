@@ -21,6 +21,7 @@ void fillMatrixWithValue(Matrix a, int value);
 void drawMaze(Matrix maze, Matrix fog, Position hero);
 void generateMaze(Matrix maze, Position *hero, Position *exit);
 void generateFog(Matrix fog, Position hero);
+void runGame(Matrix maze, Matrix fog, Position exit, Position hero);
 
 int main()
 {
@@ -37,8 +38,8 @@ int main()
 
     generateMaze(maze, &hero, &exit);
     generateFog(fog, hero);
-    drawMaze(maze, fog, hero);
-
+    //  drawMaze(maze, fog, hero);
+    runGame(maze, fog, exit, hero);
     freeMatrix(&fog);
     freeMatrix(&maze);
 
@@ -266,6 +267,59 @@ void generateHero(Matrix maze, Position *hero)
 
 void generateFog(Matrix fog, Position hero)
 {
-    fillMatrixWithValue(fog, 0);
+    fillMatrixWithValue(fog, 1);
     fog.matrix[hero.y][hero.x] = 0;
+}
+
+typedef void (*Slot)(Position *, Position, Matrix);
+
+void emptyCell(Position *hero, Position target, Matrix fog)
+{
+    *hero = target ;
+    fog.matrix[target.y][target.x]=0;
+}
+
+void wallCell(Position *hero, Position target, Matrix fog)
+{
+    fog.matrix[target.y][target.x]=0;
+}
+
+void runGame(Matrix maze, Matrix fog, Position exit, Position hero)
+{
+    static Slot slot[2] = {emptyCell, wallCell};
+
+    while(1)
+    {
+        if(exit.x == hero.x && exit.y == hero.y)
+        {
+            printf("WINNER,gameover\n");
+            return ;
+        }
+
+        clear();
+        drawMaze(maze, fog, hero);
+        Direction direction =getKey();
+        Position target=hero;
+        switch (direction)
+        {
+        case Up:
+            --target.y;
+            break;
+        case Down:
+            ++target.y;
+            break;
+        case Right:
+            ++target.x;
+            break;
+        case Left:
+            --target.x;
+            break;
+        case Mistake:
+            break;
+        default:
+            assert(0);
+        }
+
+        slot[maze.matrix[target.y][target.x]](&hero,target,fog);
+    }
 }
