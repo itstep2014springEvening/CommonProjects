@@ -24,6 +24,7 @@ void generateFog(Matrix fog, Position hero);
 
 int main()
 {
+
     srand(time(NULL));
     Matrix maze = {NULL, 0, 0};
     Matrix fog = {NULL, 0, 0};
@@ -265,6 +266,6 @@ void generateHero(Matrix maze, Position *hero)
 
 void generateFog(Matrix fog, Position hero)
 {
-    fillMatrixWithValue(fog, 1);
+    fillMatrixWithValue(fog, 0);
     fog.matrix[hero.y][hero.x] = 0;
 }
