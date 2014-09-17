@@ -17,7 +17,7 @@ typedef struct _Matrix
 
 void allocateMatrix(Matrix *a, int width, int height);
 void freeMatrix(Matrix *a);
-void fillmatrixWithValue(Matrix a, int value);
+void fillMatrixWithValue(Matrix a, int value);
 void drawMaze(Matrix maze, Matrix fog, Position hero);
 void generateMaze(Matrix maze, Position *hero, Position *exit);
 void generateFog(Matrix fog, Position hero);
@@ -27,7 +27,7 @@ int main()
     srand(time(NULL));
     Matrix maze = {NULL, 0, 0};
     Matrix fog = {NULL, 0, 0};
-    int width = 30, height = 20;
+    int width = 50, height = 35;
     Position hero, exit;
 
 
@@ -40,7 +40,6 @@ int main()
 
     freeMatrix(&fog);
     freeMatrix(&maze);
-
 
     return 0;
 }
@@ -75,13 +74,13 @@ void freeMatrix(Matrix *a)
     a->matrix = NULL;
 }
 
-void fillmatrixWithValue(Matrix a, int value)
+void fillMatrixWithValue(Matrix a, int value)
 {
     for(int i = 0; i < a.height; ++i)
     {
         for(int j = 0; j < a.width; ++j)
         {
-            a.matrix[i][j] = 0;
+            a.matrix[i][j] = value;
         }
     }
 }
@@ -118,19 +117,19 @@ void drawMaze(Matrix maze, Matrix fog, Position hero)
 
 void generateBorder(Matrix maze);
 Position generateExit(int width, int height);
-void generateWalls(Matrix maze);
+void generateWalls(Matrix maze, Position exit);
 void generateHero(Matrix maze, Position *hero);
 
 void generateMaze(Matrix maze, Position *hero, Position *exit)
 {
-    fillmatrixWithValue(maze, 0);
+    fillMatrixWithValue(maze, 0);
     generateBorder(maze);
 
     *exit = generateExit(maze.width, maze.height);
     maze.matrix[exit->y][exit->x] = 0;
 
-    generateWalls(maze);
-    generateHero(maze,hero);
+    generateWalls(maze, *exit);
+    generateHero(maze, hero);
 }
 
 void generateBorder(Matrix maze)
@@ -178,17 +177,74 @@ Position generateExit(int width, int height)
     return exit;
 }
 
-void generateWalls(Matrix maze)
+int isMazeImposible(Matrix maze, Position exit);
+
+void generateWalls(Matrix maze, Position exit)
 {
-    int countOfWall = (maze.width - 2) * (maze.height - 2) / 2;
+    int countOfWall = 3 * (maze.width - 2) * (maze.height - 2) / 7;
 
     for(int i = 0; i < countOfWall; ++i)
     {
         Position wall;
-        wall.x = rand() % (maze.width - 2) + 1;
-        wall.y = rand() % (maze.height - 2) + 1;
-        maze.matrix[wall.y][wall.x] = 1;
+        int mustRepeat;
+
+        do
+        {
+            do
+            {
+                wall.x = rand() % (maze.width - 2) + 1;
+                wall.y = rand() % (maze.height - 2) + 1;
+            }
+            while(maze.matrix[wall.y][wall.x]);
+
+            maze.matrix[wall.y][wall.x] = 1;
+            mustRepeat = isMazeImposible(maze, exit);
+
+            if(mustRepeat)
+                maze.matrix[wall.y][wall.x] = 0;
+        }
+        while(mustRepeat);
     }
+}
+
+void dfs(Matrix maze, Matrix mark, int x, int y);
+
+int isMazeImposible(Matrix maze, Position exit)
+{
+    Matrix mark;
+    allocateMatrix(&mark, maze.width, maze.height);
+    fillMatrixWithValue(mark, 0);
+    dfs(maze, mark, exit.x, exit.y);
+
+    for(int i = 0; i < maze.height; ++i)
+        for(int j = 0; j < maze.width; ++j)
+            if(maze.matrix[i][j] == 0 && mark.matrix[i][j] == 0)
+            {
+                freeMatrix(&mark);
+                return 1;
+            }
+
+    freeMatrix(&mark);
+    return 0;
+}
+
+void dfs(Matrix maze, Matrix mark, int x, int y)
+{
+    if(x < 0 || x >= maze.width || y < 0 || y >= maze.height)
+        return;
+
+    if(maze.matrix[y][x])
+        return;
+
+    if(mark.matrix[y][x])
+        return;
+
+    mark.matrix[y][x] = 1;
+
+    dfs(maze, mark, x - 1, y);
+    dfs(maze, mark, x + 1, y);
+    dfs(maze, mark, x, y - 1);
+    dfs(maze, mark, x, y + 1);
 }
 
 void generateHero(Matrix maze, Position *hero)
@@ -209,6 +265,6 @@ void generateHero(Matrix maze, Position *hero)
 
 void generateFog(Matrix fog, Position hero)
 {
-    fillmatrixWithValue(fog,0);
+    fillMatrixWithValue(fog, 1);
     fog.matrix[hero.y][hero.x] = 0;
 }
