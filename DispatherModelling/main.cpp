@@ -76,6 +76,16 @@ int main()
         ++currentQuantum;
     }
 
+    for(int i=0;i<n;++i)
+    {
+        printf("id %d", result[i].id);
+        printf("\t LT=%d", result[i].workedTime+result[i].waitedTime);
+        printf("\t ET=%d", result[i].workedTime);
+        printf("\t WT=%d", result[i].waitedTime);
+        printf("\t eff-s=%f\n", (double)result[i].workedTime/(result[i].workedTime+result[i].waitedTime));
+    }
+
+    delete [] result;
     delete [] array;
     delete [] startTime;
     return 0;
