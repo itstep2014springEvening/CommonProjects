@@ -66,6 +66,11 @@ int main(int argc, char **argv)
             return 2;
         }
     }
+    else
+    {
+        printf("not supported algorithm");
+        return 3;
+    }
 
     int *startTime = nullptr;
     Process *array = nullptr;
