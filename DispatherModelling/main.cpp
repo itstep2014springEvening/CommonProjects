@@ -30,11 +30,14 @@ bool work(Process &process);
 
 bool wait(Process &process);
 
+int find (int *startTime, int size, int value);
+
 int main()
 {
 	int *startTime = nullptr;
 	Process *array = nullptr;
 	int n;
+	Node *head=nullptr;
 	scanf("%d", &n);
 	startTime = new int [n];
 	array = new Process[n];
@@ -49,10 +52,29 @@ int main()
         array[i].status=Process::Status::WAIT;
 	}
 
+    int currentQuantum=0, countOfTerminatedProcesses=0;
+    while(countOfTerminatedProcesses != n)
+    {
+        int index=find(startTime,n,currentQuantum);
+        if(index>=0)
+            push(head, array [i]);
+    }
     delete [] array;
     delete [] startTime;
 	return 0;
 }
+
+int find (int *startTime, int size, int value)
+{
+    int result = -1;
+    for (int i=0; i<size; ++i)
+    {
+        if (startTime [i]==value)
+            return i;
+    }
+    return result;
+}
+
 
 bool work(Process &process)
 {
