@@ -61,7 +61,7 @@ int main()
         int index = find(startTime, n, currentQuantum);
 
         if(index >= 0)
-            push(head, array [i]);
+            push(head, array[index]);
 
         applyOnRest(head, wait);
 
@@ -82,7 +82,7 @@ int main()
         printf("\t LT=%d", result[i].workedTime+result[i].waitedTime);
         printf("\t ET=%d", result[i].workedTime);
         printf("\t WT=%d", result[i].waitedTime);
-        printf("\t eff-s=%f\n", (double)result[i].workedTime/(result[i].workedTime+result[i].waitedTime));
+        printf("\t eff-s=%0.3f\n", (double)result[i].workedTime/(result[i].workedTime+result[i].waitedTime));
     }
 
     delete [] result;
