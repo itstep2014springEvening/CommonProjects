@@ -14,6 +14,8 @@ int main(int argc, char **argv)
 	else
 		port = atoi(argv[1]);
 
+	fprintf(stdout,"port: %d\n", port);
+
 	if(port<=0)
 	{
 		fprintf(stderr,"port должен быть числом");
@@ -29,7 +31,7 @@ int main(int argc, char **argv)
 
 	struct sockaddr_in local;
 	local.sin_family = AF_INET;
-	local.sin_port = htons(7500);
+	local.sin_port = htons(port);
 	local.sin_addr.s_addr = htonl(INADDR_ANY);
 	int status;
 	status = bind(listenSocket, (struct sockaddr *) &local, sizeof(local));
