@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+
+#define MAX_BUFER_LENGTH 256
 
 int main(int argc, char **argv)
 {
@@ -55,20 +58,26 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	char buffer[1];
-	status = read(theSocket, buffer, 1);
-	if(status <= 0)
+	char bufer[MAX_BUFER_LENGTH]={0};
+	do
 	{
-		fprintf(stderr, "ошибка вызова read");
-		exit(1);
-	}
-	fprintf(stdout,"%c\n",buffer[0]);
-	
-	status = write(theSocket, "b", 1);
-	if(status <= 0)
-	{
-		fprintf(stderr, "ошибка вызова write");
-		exit(1);
-	}
+		status = read(theSocket, bufer, MAX_BUFER_LENGTH - 1);
+		bufer[MAX_BUFER_LENGTH - 1] = 0;
+		if(status <= 0)
+		{
+			fprintf(stderr, "ошибка вызова read");
+			exit(1);
+		}
+		fprintf(stdout,"> %-.255s",bufer);
+
+		fprintf(stdout,"< ");
+		fgets(bufer, MAX_BUFER_LENGTH, stdin);
+		status = write(theSocket, bufer, MAX_BUFER_LENGTH-1);
+		if(status <= 0)
+		{
+			fprintf(stderr, "ошибка вызова write");
+			exit(1);
+		}
+	}while(strcmp(bufer, "/exit\n")!=0);
 	return 0;
 }
