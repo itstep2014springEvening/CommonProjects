@@ -1,0 +1,6 @@
+client
+server
+bin/
+obj/
+*.obj
+*.[oa]
