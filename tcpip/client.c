@@ -4,9 +4,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
-int main()
+int main(int argc, char **argv)
 {
+	char ipAddress[16];
+	int port;
+	if(argc < 2)
+		strcpy(ipAddress, "127.0.0.1");
+	else
+		strcpy(ipAddress, argv[1]);
+
+	if(argc < 3)
+		port = 7500;
+	else
+		port = atoi(argv[2]);
+
+	if(port<=0)
+	{
+		fprintf(stderr,"port должен быть числом");
+		exit(2);
+	}
+
 	int theSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(theSocket < 0)
 	{
@@ -16,8 +35,8 @@ int main()
 
 	struct sockaddr_in host;
 	host.sin_family = AF_INET;
-	host.sin_port = htons(7500);
-	host.sin_addr.s_addr = inet_addr("127.0.0.1");
+	host.sin_port = htons(port);
+	host.sin_addr.s_addr = inet_addr(ipAddress);
 	int status;
 	status = connect(theSocket, (struct sockaddr *) &host, sizeof(host));
 	if(status)

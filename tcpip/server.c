@@ -5,8 +5,21 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int main()
+int main(int argc, char **argv)
 {
+	int port;
+
+	if(argc < 2)
+		port = 7500;
+	else
+		port = atoi(argv[1]);
+
+	if(port<=0)
+	{
+		fprintf(stderr,"port должен быть числом");
+		exit(2);
+	}
+
 	int listenSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(listenSocket < 0)
 	{
