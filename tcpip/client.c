@@ -56,12 +56,12 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	
-	status = read(theSocket, buffer, MAX_BUFER);
+	status = read(theSocket, bufer, MAX_BUFER);
 	if(status <= 0)
 	{
 		fprintf(stderr, "ошибка вызова read");
 		exit(1);
 	}
-	fprintf(stdout,"> %s\n",buffer);
+	fprintf(stdout,"> %s\n",bufer);
 	return 0;
 }
