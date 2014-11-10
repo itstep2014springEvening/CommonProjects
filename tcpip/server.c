@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define MAX_BUFER 512
+
 int main(int argc, char **argv)
 {
 	int port;
@@ -55,16 +57,17 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	char buffer[1];
-	status = read(theSocket, buffer, 1);
+	char bufer[MAX_BUFER];
+	status = read(theSocket, bufer, MAX_BUFER);
 	if(status <= 0)
 	{
 		fprintf(stderr, "ошибка вызова read");
 		exit(1);
 	}
-	fprintf(stdout,"%c\n",buffer[0]);
+	fprintf(stdout,"> %s\n",bufer);
 	
-	status = write(theSocket, "b", 1);
+	fgets(bufer, MAX_BUFER, stdin);
+	status = write(theSocket, bufer, MAX_BUFER);
 	if(status <= 0)
 	{
 		fprintf(stderr, "ошибка вызова write");
