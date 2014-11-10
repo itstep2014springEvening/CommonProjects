@@ -17,8 +17,6 @@ int main(int argc, char **argv)
 	else
 		port = atoi(argv[1]);
 
-	fprintf(stdout,"port: %d\n", port);
-
 	if(port<=0)
 	{
 		fprintf(stderr,"port должен быть числом");
@@ -40,7 +38,7 @@ int main(int argc, char **argv)
 	status = bind(listenSocket, (struct sockaddr *) &local, sizeof(local));
 	if(status < 0)
 	{
-		fprintf(stderr,"ошибка вызова функции bind\n");
+		fprintf(stderr,"ошибка вызова функции bind\nport: %d\n", port);
 		exit(1);
 	}
 
@@ -58,6 +56,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	fprintf(stdout,"соединение установлено\n\n");
 	char bufer[MAX_BUFER_LENGTH]={0};
 	do
 	{
