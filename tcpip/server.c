@@ -56,22 +56,26 @@ int main(int argc, char **argv)
 		fprintf(stderr,"ошибка вызова функции accept\n");
 		exit(1);
 	}
+	fprintf (stdout, "соединение установлено\n");
 
 	char bufer[MAX_BUFER];
-	status = read(theSocket, bufer, MAX_BUFER);
-	if(status <= 0)
-	{
-		fprintf(stderr, "ошибка вызова read");
-		exit(1);
-	}
-	fprintf(stdout,"> %s\n",bufer);
-	
-	fgets(bufer, MAX_BUFER, stdin);
-	status = write(theSocket, bufer, MAX_BUFER);
-	if(status <= 0)
-	{
-		fprintf(stderr, "ошибка вызова write");
-		exit(1);
-	}
+	do{
+		status = read(theSocket, bufer, MAX_BUFER);
+		if(status <= 0)
+		{
+			fprintf(stderr, "ошибка вызова read");
+			exit(1);
+		}
+		fprintf(stdout,"> %s\n",bufer);
+
+		fprintf(stdout,"< ");
+		fgets(bufer, MAX_BUFER, stdin);
+		status = write(theSocket, bufer, MAX_BUFER);
+		if(status <= 0)
+		{
+			fprintf(stderr, "ошибка вызова write");
+			exit(1);
+		}
+	}while(strcmp("/exit\n", bufer)!=0);
 	return 0;
 }
