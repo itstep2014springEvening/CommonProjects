@@ -55,6 +55,7 @@ int main(int argc, char **argv)
 		fprintf(stderr,"ошибка вызова функции accept\n");
 		exit(1);
 	}
+	fprintf (stdout, "соединение установлено\n");
 
 	fprintf(stdout,"соединение установлено\n\n");
 	char bufer[MAX_BUFER_LENGTH]={0};
