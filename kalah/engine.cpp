@@ -1,4 +1,5 @@
 #include "engine.h"
+#include <QDebug>
 
 Engine::Engine()
 {
@@ -26,7 +27,7 @@ int nextPull(int player, int pull)//ukazatel' na next kletku;
     {
         return player == 1 ? 13 : 0;
     }
-    return pull + 1;
+    return (pull + 1) % 14;
 }
 
 void Engine::makeTurn(int player, int pull)
@@ -35,27 +36,32 @@ void Engine::makeTurn(int player, int pull)
             pull < 6 &&
             array[player * 7 + pull])//opredeleniye verha i niza v kalahe
     {
-        int hand = array[player * 7 + pull];
         int currentPull = player * 7 + pull;
-        array[player * 7 + pull] = 0;
+        int hand = array[currentPull];
+
+        array[currentPull] = 0;
         while(hand)
         {
             currentPull = nextPull(player, currentPull);
             ++array[currentPull];
             --hand;
         }
-        if(currentPull != 7 && currentPull != 13)
+        if(currentPull != 6 && currentPull != 13)
         {
             currentPlayer = 1 - player;
         }
         if(array[currentPull] == 1 &&
-                currentPlayer / 7 == player &&
-                array[(currentPull + 7) % 14])
+                currentPull / 7 == player &&
+                array[12-currentPull])
         {
+            qDebug()<<"currentPull"<<currentPull;
+            qDebug()<<"versusPull"<<12-currentPull;
             array[player * 7 + 6]
-            +=
-                array[currentPull]
-                + array[(currentPull + 7) % 14];
+            += array[currentPull]
+               + array[12-currentPull];
+            array[currentPull] = 0;
+            array[12-currentPull] = 0;
+
         }
         int sumFirst = 0, sumSecond = 0;
         for(int i = 0; i < 6; ++i)
