@@ -30,12 +30,12 @@ template <typename T>
 class List
 {
 public:
-    List(); //Конструктор
-    List(const List<T> &other); //Конструктор копирования
-    List &operator=(const List<T> &rhs);  //Оператор присваивания
-    List(List<T> &&victim); //Конструктор перемещения
-    List &operator=(List<T> &&rhs); //Оператор переместительного присваивания
-    ~List() noexcept; //Деструктор
+    List(); //ÐÐ¾Ð½ÑÑÑÑÐºÑÐ¾Ñ
+    List(const List<T> &other); //ÐÐ¾Ð½ÑÑÑÑÐºÑÐ¾Ñ ÐºÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°Ð½Ð¸Ñ
+    List &operator=(const List<T> &rhs);  //ÐÐ¿ÐµÑÐ°ÑÐ¾Ñ Ð¿ÑÐ¸ÑÐ²Ð°Ð¸Ð²Ð°Ð½Ð¸Ñ
+    List(List<T> &&victim); //ÐÐ¾Ð½ÑÑÑÑÐºÑÐ¾Ñ Ð¿ÐµÑÐµÐ¼ÐµÑÐµÐ½Ð¸Ñ
+    List &operator=(List<T> &&rhs); //ÐÐ¿ÐµÑÐ°ÑÐ¾Ñ Ð¿ÐµÑÐµÐ¼ÐµÑÑÐ¸ÑÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¿ÑÐ¸ÑÐ²Ð°Ð¸Ð²Ð°Ð½Ð¸Ñ
+    ~List() noexcept; //ÐÐµÑÑÑÑÐºÑÐ¾Ñ
 
     friend class Iterator<T>;
     typedef Iterator<T> Iterator;
