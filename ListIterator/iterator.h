@@ -1,6 +1,8 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
 
+#include "list.h"
+
 template <typename T>
 class Iterator final
 {
@@ -19,6 +21,15 @@ public:
     Iterator operator++(int);
     bool operator==(const Iterator &other);
     bool operator!=(const Iterator &other);
+private:
+    const List<T> *owner;
+    List<T>::Node<T> *current;
+    Iterator(const List<T> *owner, List<T>::Node<T> *current) :
+        owner(owner),
+        current(current)
+    {
+
+    }
 };
 
 #endif // ITERATOR_H
