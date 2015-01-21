@@ -6,6 +6,6 @@
 *.depend
 bin/
 obj/
-Debug/
-Release/
+*[Dd]ebug*/
+*[Rr]elease*/
 *.user

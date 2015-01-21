@@ -3,28 +3,35 @@
 
 #include "list.h"
 
+template<typename T>
+class List;
+
 template <typename T>
-class Iterator final
+class IteratorImpl final
 {
 public:
-    Iterator(); //ÐÐ¾Ð½ÑÑÑÑÐºÑÐ¾Ñ
-    Iterator(const Iterator<T> &other); //ÐÐ¾Ð½ÑÑÑÑÐºÑÐ¾Ñ ÐºÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°Ð½Ð¸Ñ
-    Iterator &operator=(const Iterator<T> &rhs);  //ÐÐ¿ÐµÑÐ°ÑÐ¾Ñ Ð¿ÑÐ¸ÑÐ²Ð°Ð¸Ð²Ð°Ð½Ð¸Ñ
-    Iterator(Iterator<T> &&victim); //ÐÐ¾Ð½ÑÑÑÑÐºÑÐ¾Ñ Ð¿ÐµÑÐµÐ¼ÐµÑÐµÐ½Ð¸Ñ
-    Iterator &operator=(Iterator<T> &&rhs); //ÐÐ¿ÐµÑÐ°ÑÐ¾Ñ Ð¿ÐµÑÐµÐ¼ÐµÑÑÐ¸ÑÐµÐ»ÑÐ½Ð¾Ð³Ð¾ Ð¿ÑÐ¸ÑÐ²Ð°Ð¸Ð²Ð°Ð½Ð¸Ñ
-    ~Iterator(); //ÐÐµÑÑÑÑÐºÑÐ¾Ñ
+    IteratorImpl():owner(nullptr),current(nullptr){}
+    IteratorImpl(const IteratorImpl<T> &other)=default;
+    IteratorImpl &operator=(const IteratorImpl<T> &rhs)=default;
+    IteratorImpl(IteratorImpl<T> &&victim)=default;
+    IteratorImpl &operator=(IteratorImpl<T> &&rhs)=default;
+    ~IteratorImpl()=default;
 
-    friend class List<T>;
+    friend List<T>;
     T &operator*() const;
     T *operator->() const;
-    Iterator operator++();
-    Iterator operator++(int);
-    bool operator==(const Iterator &other);
-    bool operator!=(const Iterator &other);
+    IteratorImpl operator++();
+    IteratorImpl operator++(int);
+    IteratorImpl operator--();
+    IteratorImpl operator--(int);
+    bool operator==(const IteratorImpl &other);
+    bool operator!=(const IteratorImpl &other);
 private:
     const List<T> *owner;
-    List<T>::Node<T> *current;
-    Iterator(const List<T> *owner, List<T>::Node<T> *current) :
+    typename List<T>::Node *current;
+
+    IteratorImpl(const List<T> *owner,
+             typename List<T>::Node *current) :
         owner(owner),
         current(current)
     {
@@ -32,5 +39,53 @@ private:
     }
 };
 
-#endif // ITERATOR_H
-//shared_ptr ÑÐ¼Ð½ÑÐ¹ ÑÐºÐ°Ð·Ð°ÑÐµÐ»Ñ, Ð±Ð¸Ð±Ð»Ð¸Ð¾ÑÐµÐºÐ° memory
+template<typename T>
+T &IteratorImpl<T>::operator*() const
+{
+
+}
+
+template<typename T>
+T *IteratorImpl<T>::operator->() const
+{
+
+}
+
+template<typename T>
+IteratorImpl<T> IteratorImpl<T>::operator++()
+{
+
+}
+
+template<typename T>
+IteratorImpl<T> IteratorImpl<T>::operator++(int)
+{
+
+}
+
+template<typename T>
+IteratorImpl<T> IteratorImpl<T>::operator--()
+{
+
+}
+
+template<typename T>
+IteratorImpl<T> IteratorImpl<T>::operator--(int)
+{
+
+}
+
+template<typename T>
+bool IteratorImpl<T>::operator==(const IteratorImpl &other)
+{
+
+}
+
+template<typename T>
+bool IteratorImpl<T>::operator!=(const IteratorImpl &other)
+{
+
+}
+
+
+#endif // IteratorImpl_H
