@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication14
 {
-    class Event
+    abstract class Event
     {
         public readonly uint time;
         public Event(uint time)
@@ -25,6 +25,7 @@ namespace ConsoleApplication14
 
         public override void process()
         {
+            Console.WriteLine("{0}: New passanger at {1}", Program.time, where.name);
             new Passanger(where);
         }
 
@@ -51,6 +52,7 @@ namespace ConsoleApplication14
         readonly Stop stop;
         public Passanger(Stop stop)
         {
+            this.stop = stop;
             this.stop.passangers.Add(this);
 
             arrival = Program.time;
@@ -93,6 +95,7 @@ namespace ConsoleApplication14
                         upcomingEvent = ev;
                     }
                 }
+                time = upcomingEvent.time;
                 upcomingEvent.process();
 
             }
