@@ -7,9 +7,6 @@ using MathNet.Numerics.Distributions;
 
 namespace Events
 {
-
-
-
     struct AverageAccumulator<T>
     {
         private uint N;
@@ -17,12 +14,12 @@ namespace Events
 
         public void Add(T value)
         {
-            sum += (dynamic)value;
+            sum = (dynamic)sum + (dynamic)value;
             N++;
         }
         public void Reset()
         {
-            sum = (dynamic)0;
+            sum = default(T);
             N = 0;
         }
         public T Value
@@ -33,8 +30,6 @@ namespace Events
             }
         }
     }
-
-
 
     class MyMultimap<TKey, TValue> where TKey : IComparable
     {
@@ -113,7 +108,7 @@ namespace Events
             Console.WriteLine("{0}: A Bus arrived to the  {1}", Program.time, bus.where.name);
             bus.takeoff();
             bus.boarding();
-
+            Program.avgPassengers.Add(Bus.passangers.Count);
             double mean = bus.where.timeToNext;
             
             double stdDev =mean/4;
@@ -125,6 +120,21 @@ namespace Events
 
             Program.events.Add(new BusArrivalEvent(time + (uint)randomGaussianValue, bus));
 
+        }
+    }
+
+    class StatisticsEvents : Event
+    {
+        public StatisticsEvents(uint time):
+            base(time)
+        {
+
+        }
+        public override void process()
+        {
+            Console.WriteLine(Program.avgPassengers.Value);
+            Program.avgPassengers.Reset();
+            Program.events.Add(new StatisticsEvents(time + 50));
         }
     }
     class Stop
@@ -147,7 +157,8 @@ namespace Events
     {
         public List<Stop>.Enumerator stopEnumerator;
         const uint capacity = 18;
-
+        // время выхода на линию
+        static uint startTime = 1;
         
         // 
         public static List<Passanger> passangers = new List<Passanger>();
@@ -160,10 +171,11 @@ namespace Events
         }
 
         public Bus()
-        {
 
+        {
             this.stopEnumerator = Program.stops.GetEnumerator();
-            Program.events.Add(new BusArrivalEvent(1, this));
+            Program.events.Add(new BusArrivalEvent(startTime, this));
+            startTime += Program.intervalTime;
         }
         public void next()
         {
@@ -276,11 +288,12 @@ namespace Events
     class Program
     {
         public static uint time;
+        public static uint intervalTime;
         public static EventQueue events;
         public static List<Stop> stops;
-        public static AverageAccumulator<int> avgPassengers;
+        public static AverageAccumulator<long> avgPassengers;
         public static AverageAccumulator<int> avgWait;
-
+        public const uint numberOfBuses = 10;
         static void Main(string[] args)
         {
             time = 0;
@@ -290,7 +303,11 @@ namespace Events
                     new Stop("Frunzenskaja", 19, 5),
                     new Stop("Niamiha", 30, 6)
             };
-
+            foreach(Stop stop in stops)
+            {
+                intervalTime += (uint)stop.timeToNext;
+            }
+            intervalTime /= numberOfBuses;
             // добовляем событие прихода первых пассажиров
             List<Stop>.Enumerator stopEnumerator = stops.GetEnumerator();
             events = new EventQueue();
@@ -299,7 +316,12 @@ namespace Events
                 events.Add(new NewPassangerEvent(1, stopEnumerator));
             }
 
-            Bus bus = new Bus();
+            for (int i = 0; i < numberOfBuses; i++)
+            {
+                Bus bus = new Bus();
+            }
+
+            events.Add(new StatisticsEvents(50));
 
             while (time < 300)
             {
