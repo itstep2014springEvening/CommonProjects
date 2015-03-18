@@ -6,6 +6,35 @@ using System.Threading.Tasks;
 using MathNet.Numerics.Distributions;
 namespace Events
 {
+    class MyMultimap<TKey, TValue> where TKey : IComparable
+    {
+        SortedDictionary<TKey, List<TValue>> tree = new SortedDictionary<TKey, List<TValue>>();
+
+        public void Add(TKey key, TValue value)
+        {
+
+            if (tree.ContainsKey(key) == false)
+            {
+                tree[key] = new List<TValue>();
+            }
+            tree[key].Add(value);
+        }
+        public void RemoveFirst()
+        {
+            if (tree.First().Value != null)
+            {
+                tree.First().Value.Remove(tree.First().Value.First());
+            }
+            if (tree.First().Value.Count == 0)
+            {
+                tree.Remove(tree.First().Key);
+            }
+        }
+        public TValue First()
+        {
+            return tree.First().Value.First();
+        }
+    }
     public enum Day { M, D, Mit, Don, Fr, Sb, S };
     abstract class Event
     {
@@ -15,6 +44,13 @@ namespace Events
             this.time = time;
         }
         public virtual void process() { }
+    }
+    class EventQueue : MyMultimap<uint, Event>
+    {
+        public void Add(Event e)
+        {
+            base.Add(e.time, e);
+        }
     }
 
     class NewPassangerEvent : Event
@@ -210,7 +246,7 @@ namespace Events
     class Program
     {
         public static uint time;
-        public static List<Event> events;
+        public static EventQueue events;
         public static List<Stop> stops;
 
         static void Main(string[] args)
@@ -225,7 +261,7 @@ namespace Events
 
             // добовляем событие прихода первых пассажиров
             List<Stop>.Enumerator stopEnumerator = stops.GetEnumerator();
-            events = new List<Event>();
+            events = new EventQueue();
             while (stopEnumerator.MoveNext())
             {
                 events.Add(new NewPassangerEvent(1, stopEnumerator));
@@ -233,23 +269,14 @@ namespace Events
 
             Bus bus = new Bus();
 
-            while (time < 100)
+            while (time < 300)
             {
-                uint mintime = events[0].time;
-                Event upcomingEvent = events[0];
-                foreach (Event ev in events)
-                {
-                    if (ev.time < mintime)
-                    {
-                        mintime = ev.time;
-                        upcomingEvent = ev;
-                    }
-                }
-                time = upcomingEvent.time;
-                upcomingEvent.process();
-                events.Remove(upcomingEvent);
+      
+                time = events.First().time;
+                events.First().process();
+                events.RemoveFirst();
 
-            }
+            }}
             
             
   /*          double stdDev = 10;
@@ -265,4 +292,3 @@ namespace Events
 
         }
     }
-}
