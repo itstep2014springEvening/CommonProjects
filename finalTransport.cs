@@ -5,13 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.Distributions;
 
-
-
 namespace Events
 {
 
 
-    struct AverageAccumulator<T> 
+
+    struct AverageAccumulator<T>
     {
         private uint N;
         private T sum;
@@ -30,10 +29,12 @@ namespace Events
         {
             get
             {
-                return ((dynamic)sum )/ N;
+                return ((dynamic)sum) / N;
             }
         }
     }
+
+
 
     class MyMultimap<TKey, TValue> where TKey : IComparable
     {
@@ -109,20 +110,18 @@ namespace Events
         public override void process()
         {
             bus.next();
-           
+            Console.WriteLine("{0}: A Bus arrived to the  {1}", Program.time, bus.where.name);
             bus.takeoff();
             bus.boarding();
-            Console.WriteLine("{0}: A Bus arrived to the  {1}, pass{2} ", Program.time, bus.where.name);
-            double mean = bus.where.timeToNext;
 
-            double stdDev = mean / 4;
+            double mean = bus.where.timeToNext;
+            
+            double stdDev =mean/4;
             double randomGaussianValue = 0;
-            do
-            {
-                MathNet.Numerics.Distributions.Normal normalDist = new Normal(mean, stdDev);
-                randomGaussianValue = normalDist.Sample();
-            }
-            while (randomGaussianValue < 2 * mean / 3);
+            do{
+            MathNet.Numerics.Distributions.Normal normalDist = new Normal(mean, stdDev);
+            randomGaussianValue = normalDist.Sample();}
+            while(randomGaussianValue<2*mean/3);
 
             Program.events.Add(new BusArrivalEvent(time + (uint)randomGaussianValue, bus));
 
@@ -131,7 +130,7 @@ namespace Events
     class Stop
     {
         public Queue<Passanger> passangers;
-        //время прихода автобуса на следующую остановку
+       //время прихода автобуса на следующую остановку
         public readonly double timeToNext;
         // интервал прихода пассажиров на данную остановку
         public readonly double passangerInterval;
@@ -149,7 +148,7 @@ namespace Events
         public List<Stop>.Enumerator stopEnumerator;
         const uint capacity = 18;
 
-
+        
         // 
         public static List<Passanger> passangers = new List<Passanger>();
         public Stop where
@@ -181,7 +180,7 @@ namespace Events
             {
                 Passanger p = where.passangers.Dequeue();
                 passangers.Add(p);
-                uint time = Program.time - p.arrival;
+                uint time = Program.time - p.arrival; 
                 Console.Write("{0}: Пассажир садится в аватобус  на {1}", Program.time, where.name);
                 Console.WriteLine(" , прождав автобус {0} секунд", time);
             }
@@ -189,16 +188,16 @@ namespace Events
         }
         public void takeoff()
         {
-            passangers.RemoveAll(p => p.exitStop == where);
-            //                     Console.WriteLine("{0}: Пассажир выходит из аватобуса  на {1}", Program.time, where.name);
-
+            passangers.RemoveAll( p => p.exitStop == where);
+//                     Console.WriteLine("{0}: Пассажир выходит из аватобуса  на {1}", Program.time, where.name);
+           
         }
 
     }
     class Passanger
     {
         public List<Stop>.Enumerator stopEnumerator;
-
+       
         /*double stdDev = 10;
 
             double mean = 100;
@@ -208,28 +207,28 @@ namespace Events
             double randomExpValue = expDist.Sample();
             Console.WriteLine(randomGaussianValue);
             Console.WriteLine(randomExpValue);*/
-
+        
         //время прихода на остановку
-        public readonly uint arrival;
-
+       public  readonly uint arrival;
+        
         // остановка, где пассажир ожидает
         readonly Stop boardingStop;
-
+        
         //остановка, где выходит
         readonly public Stop exitStop;
         readonly public Stop previousExitStop;
 
         public Passanger(List<Stop>.Enumerator stopEnumerator)
         {
-
-            double randomHumanArrival = -1;
-            while (randomHumanArrival < 0)
+           
+            double randomHumanArrival=-1;
+            while(randomHumanArrival<0)
             {
-                MathNet.Numerics.Distributions.Exponential expDist = new Exponential(1 / stopEnumerator.Current.passangerInterval);
-                randomHumanArrival = expDist.Sample();
+               MathNet.Numerics.Distributions.Exponential expDist = new Exponential(1 /stopEnumerator.Current.passangerInterval);
+               randomHumanArrival = expDist.Sample();
             }
             arrival = Program.time;
-            uint nextArrival = Program.time + (uint)randomHumanArrival;
+            uint nextArrival = Program.time +(uint) randomHumanArrival;
             Program.events.Add(new NewPassangerEvent(nextArrival, stopEnumerator));
 
             ////////////////////////
@@ -256,20 +255,20 @@ namespace Events
 
                 if (stopEnumerator.MoveNext() == false)
                 {
-
-                    break;
+               
+                 break;
                 }
-                if (stopEnumerator.Current == null)
+                if(stopEnumerator.Current == null)
                 {
                     exitStop = previousExitStop;
                 }
-                /*  if(stopEnumerator.MoveNext() == null)
-                  {
-                      stopEnumerator.MoveNext() = stopEnumerator.Current;
-                  }*/
+              /*  if(stopEnumerator.MoveNext() == null)
+                {
+                    stopEnumerator.MoveNext() = stopEnumerator.Current;
+                }*/
             }
-            exitStop = previousExitStop;
-
+            exitStop =previousExitStop;
+          
 
         }
     }
@@ -304,25 +303,27 @@ namespace Events
 
             while (time < 300)
             {
-
+      
                 time = events.First().time;
                 events.First().process();
                 events.RemoveFirst();
 
             }
+            
+            
+  /*          double stdDev = 10;
+
+            double mean = 100;
+            MathNet.Numerics.Distributions.Normal normalDist = new Normal(mean, stdDev);
+            double randomGaussianValue = normalDist.Sample();
+            MathNet.Numerics.Distributions.Exponential expDist = new Exponential(1/mean);
+            double randomExpValue = expDist.Sample();
+            Console.WriteLine(randomGaussianValue);
+            Console.WriteLine(randomExpValue);
+            */
+
         }
-
-
-        /*          double stdDev = 10;
-
-                  double mean = 100;
-                  MathNet.Numerics.Distributions.Normal normalDist = new Normal(mean, stdDev);
-                  double randomGaussianValue = normalDist.Sample();
-                  MathNet.Numerics.Distributions.Exponential expDist = new Exponential(1/mean);
-                  double randomExpValue = expDist.Sample();
-                  Console.WriteLine(randomGaussianValue);
-                  Console.WriteLine(randomExpValue);
-                  */
-
     }
+
+
 }
